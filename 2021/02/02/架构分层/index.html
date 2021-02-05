@@ -1,11 +1,11 @@
-<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>’架构分层‘ | 如何做到年薪百万</title><script src="https://cdn.bootcss.com/valine/1.4.4/Valine.min.js"></script><link rel="stylesheet" href="/blog.io/css/arknights.css"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/highlight.js/10.1.2/styles/atom-one-dark-reasonable.min.css"><style>@font-face {
+<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>架构分层 | 如何做到年薪百万</title><script src="https://cdn.bootcss.com/valine/1.4.4/Valine.min.js"></script><link rel="stylesheet" href="/blog.io/css/arknights.css"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/highlight.js/10.1.2/styles/atom-one-dark-reasonable.min.css"><style>@font-face {
  font-family: BenderLight;
  src: local('Bender'), url("/blog.io/font/BenderLight.ttf");
 }
 @font-face {
  font-family: 'JetBrains Mono';
  src: local('JetBrains Mono'), url('/blog.io/font/JetBrainsMono-Regular.woff2') format('woff2');
-}</style><meta name="generator" content="Hexo 5.3.0"></head><body><header><nav><a href="/blog.io/">Home</a><a href="/blog.io/archives/">Archives</a></nav></header><main><article><div id="post-bg"><div id="post-title"><div id="post-info"><span>date:<time datetime="2021-02-02T11:46:33.000Z" id="date"> 2021-02-02</time></span><br><span>updated:<time datetime="2021-02-05T11:06:06.543Z" id="updated"> 2021-02-05</time></span></div><h1>’架构分层‘</h1><hr></div><div id="post-content"><p>在系统从0到1的阶段，为了能让系统快速上线， 我们通常不考虑分层。 但是随着业务系统越来越庞大，就会出现大量代码纠缠在一起，出现逻辑混乱，<br>各模块互相依赖，代码扩展性差，改一处而动全身等问题。<br><br/><br>这时，就要思考分层的问题了</p>
+}</style><meta name="generator" content="Hexo 5.3.0"></head><body><header><nav><a href="/blog.io/">Home</a><a href="/blog.io/archives/">Archives</a></nav></header><main><article><div id="post-bg"><div id="post-title"><div id="post-info"><span>date:<time datetime="2021-02-02T11:46:33.000Z" id="date"> 2021-02-02</time></span><br><span>updated:<time datetime="2021-02-05T11:09:21.424Z" id="updated"> 2021-02-05</time></span></div><h1>架构分层</h1><hr></div><div id="post-content"><p>在系统从0到1的阶段，为了能让系统快速上线， 我们通常不考虑分层。 但是随着业务系统越来越庞大，就会出现大量代码纠缠在一起，出现逻辑混乱，<br>各模块互相依赖，代码扩展性差，改一处而动全身等问题。<br><br/><br>这时，就要思考分层的问题了</p>
 <h3 id="什么是分层架构"><a href="#什么是分层架构" class="headerlink" title="什么是分层架构"></a>什么是分层架构</h3><p>软件架构分层是将整体系统拆分成N个层次，每个层级有独立的职责，多个层次协助完成的功能。例如MVC<br>就是一种标准的软件分层框架。另外一种常见的分层方式是将整体架构分为<strong>表现层，逻辑层和数据访问层</strong>。</p>
 <ul>
 <li>表现层，顾名思义就是展示数据结果和接受用户指令的，最接近用户的一层</li>
