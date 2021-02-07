@@ -5,7 +5,7 @@
 @font-face {
  font-family: 'JetBrains Mono';
  src: local('JetBrains Mono'), url('/blog.io/font/JetBrainsMono-Regular.woff2') format('woff2');
-}</style><meta name="generator" content="Hexo 5.3.0"></head><body><header><nav><a href="/blog.io/">Home</a><a href="/blog.io/archives/">Archives</a></nav></header><main><article><div id="post-bg"><div id="post-title"><div id="post-info"><span>date:<time datetime="2021-01-08T07:07:47.000Z" id="date"> 2021-01-08</time></span><br><span>updated:<time datetime="2021-01-14T10:07:26.675Z" id="updated"> 2021-01-14</time></span></div><h1>MySql事务处理</h1><hr></div><div id="post-content"><p>事务(Transaction)是MySQL对SQL用户操作数据库的一种抽象。我们执行的每一条SQL语句都可以被看作是事务。一般来说，我们的MySQL在执行SQL语句时采用自动提交的模式，这就让我感觉不到事务的存在。其实，事务是为了保障多个SQL操作的一致性。MySQL的事务主要用于处理操作量大，复杂度高的数据。</p>
+}</style><meta name="generator" content="Hexo 5.3.0"></head><body><header><nav><a href="/blog.io/">Home</a><a href="/blog.io/archives/">Archives</a></nav></header><main><article><div id="post-bg"><div id="post-title"><div id="post-info"><span>date:<time datetime="2021-01-08T07:07:47.000Z" id="date"> 2021-01-08</time></span><br><span>updated:<time datetime="2021-02-07T03:18:24.513Z" id="updated"> 2021-02-07</time></span></div><h1>MySql事务处理</h1><hr></div><div id="post-content"><p>事务(Transaction)是MySQL对SQL用户操作数据库的一种抽象。我们执行的每一条SQL语句都可以被看作是事务。一般来说，我们的MySQL在执行SQL语句时采用自动提交的模式，这就让我感觉不到事务的存在。其实，事务是为了保障多个SQL操作的一致性。MySQL的事务主要用于处理操作量大，复杂度高的数据。</p>
 <p>同时，在MySQL中只有InnoDB引擎是支持事务处理的。通过SHOW ENGINES;可以查询到，我们数据库的存储引擎相关的信息。</p>
 <figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs markdown">如果想要把一个表的存储引擎切换为InnoDB，我们可以使用SQL语句进行切换。<br><br>ALTER TABLE [table<span class="hljs-emphasis">_name] ENGINE=InnoDB；</span><br></code></pre></td></tr></table></figure>
 <h2 id="1-事务的特性"><a href="#1-事务的特性" class="headerlink" title="1. 事务的特性"></a>1. 事务的特性</h2><p>事务的特性我们一般简称为ACID。已经在上一篇中提到过</p>
@@ -32,9 +32,13 @@
 <p>扁平事务的特点，就是被事务包裹起来的SQL代码段只有一个状态即要么成功要么失败。</p>
 <h4 id="3-2-保存点事务"><a href="#3-2-保存点事务" class="headerlink" title="3.2 保存点事务"></a>3.2 保存点事务</h4><p>保存点事务和扁平事务是形成鲜明对比的。保存点事务允许事务在执行过程中回滚到本事务先前的一个状态。<br>这样就降低了因事务中某个环节出错而导致整个事务回滚的开销。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs plain">BEGIN WORK;<br>&#x2F;&#x2F;TODO 1<br>SAVEPOINT t1<br>&#x2F;&#x2F;TODO 2<br>SAVEPOINT t2<br>COMMIT WORK&#x2F;ROLLBACK WORK&#x2F;ROLLBACK TO SAVEPOINT t1;<br></code></pre></td></tr></table></figure>
-<h4 id="3-3链式事务"><a href="#3-3链式事务" class="headerlink" title="3.3链式事务"></a>3.3链式事务</h4><p>链式事务是在提交一个事务时，释放不必要的数据对象，同时将必要的上下文隐式传递给下一个事务。<br>提交事务和下一个事务操作将被视为原子操作，就是下一个事务可以看到上一个事务的执行结果。<br>不过链式事务在回滚时，只能回滚到就近的上一个保存点。<br><img src="http://m.qpic.cn/psc?/V51lIF8R3HS9sa4GVlzK1thDGf39F65U/ruAMsa53pVQWN7FLK88i5rj9TxzNzoNEMKztzgZEflWZpJGf4N5TFhFMKdTm4Pa76pHvSNGqLyzKjWq17ksWGpyG4PIqAVQL8mibbYuPtBo!/b&bo=CQN4AQAAAAADB1E!&rf=viewer_4" alt="链式事务" title="链式事务"></p>
+<h4 id="3-3链式事务"><a href="#3-3链式事务" class="headerlink" title="3.3链式事务"></a>3.3链式事务</h4><p>链式事务是在提交一个事务时，释放不必要的数据对象，同时将必要的上下文隐式传递给下一个事务。<br>提交事务和下一个事务操作将被视为原子操作，就是下一个事务可以看到上一个事务的执行结果。<br>不过链式事务在回滚时，只能回滚到就近的上一个保存点。</p>
+<img src="/blog.io/img/链式事务.png">
+
 <h4 id="3-4嵌套事务"><a href="#3-4嵌套事务" class="headerlink" title="3.4嵌套事务"></a>3.4嵌套事务</h4><p>嵌套事务顾名思义便是多个事务嵌套在一起，如下图所示。这种情况下，我们一般把最外层事务称之为顶层事务，一个事务的前驱事务为父事务、后继事务为子事务。</p>
-<p>嵌套事务的特点便是，任何一个节点的子事务都可以提交或回滚。但是只有在其父事务提交或回滚后，其事务才能算的上是真正意义上的提交或回滚。由此便可得出结论，只有在顶层事务提交或回滚后，所有的事务才生效。<br><img src="http://a1.qpic.cn/psc?/V51lIF8R3HS9sa4GVlzK1thDGf39F65U/ruAMsa53pVQWN7FLK88i5krnoQNs1ND7YDnJI*fA0BCozaq56OD7rCLTeo9P*AJARCNJNOsXIAwCFhY*SPv6qAAEwt9X2BhuLf.4us91CAc!/c&ek=1&kp=1&pt=0&bo=twL4AQAAAAADF34!&tl=1&vuin=2581170206&tm=1610089200&sce=60-2-2&rf=newphoto&t=5" alt="嵌套事务" title="嵌套事务"> </p>
+<p>嵌套事务的特点便是，任何一个节点的子事务都可以提交或回滚。但是只有在其父事务提交或回滚后，其事务才能算的上是真正意义上的提交或回滚。由此便可得出结论，只有在顶层事务提交或回滚后，所有的事务才生效。</p>
+<img src="/blog.io/img/嵌套事务.png">
+
 <h4 id="3-5分布式事务"><a href="#3-5分布式事务" class="headerlink" title="3.5分布式事务"></a>3.5分布式事务</h4><p>分布式事务通常是指在一个分布式环境下运行的扁平事务，因此需要根据数据所在位置访问网络中的不同节点。<br>在不同的物理地址，通过网络访问，执行不同的事务，这就是分布式事务。</p>
 <p><font color="#dd0000">关于分布式事务的回滚，还需要继续研究</font></p>
 <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/jing99/p/11769093.html">https://www.cnblogs.com/jing99/p/11769093.html</a></p>
